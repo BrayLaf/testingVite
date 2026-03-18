@@ -20,13 +20,31 @@ pipeline{
             }
         }
         stage('Test'){
+            agent{
+                docker{
+                    image 'node:24.14.0'
+                    reuseNode true
+                }
+            }
             steps{
-                echo 'Testing...'
+                sh '''
+
+                    npm test
+                '''
             }
         }
         stage('Deploy'){
+            agent{
+                docker{
+                    image 'node:24.14.0'
+                    reuseNode true
+                }
+            }
             steps{
-                echo 'Deploying...'
+                sh '''
+                    npm install netlify-cli
+                    netlify --version
+                '''
             }
         }
     }
