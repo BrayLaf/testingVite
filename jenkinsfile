@@ -28,7 +28,6 @@ pipeline{
             }
             steps{
                 sh '''
-
                     npm test
                 '''
             }
@@ -41,10 +40,15 @@ pipeline{
                 }
             }
             steps{
-                sh '''
-                    npm install netlify-cli
-                    node_modules/.bin/netlify --version
-                '''
+                withCredentials([
+                    string(credentialsId: 'netlify-auth-token', variable: 'NETLIFY_AUTH_TOKEN'),
+                    string(credentialsId: 'netlify-site-id', variable: 'NETLIFY_SITE_ID')
+                ]) {
+                    sh '''
+                        npx netlify-cli --version
+                        npx netlify-cli deploy --prod --dir=dist --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
+                    '''
+                }
             }
         }
     }
