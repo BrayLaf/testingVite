@@ -1,6 +1,13 @@
 pipeline{
     agent any
     stages{
+        stage('Docker Build'){
+            steps{
+                sh '''
+                    docker build -t my-react-app:latest .
+                '''
+            }
+        }   
         stage('Build'){
             agent{
                 docker{
@@ -35,7 +42,7 @@ pipeline{
         stage('Deploy'){
             agent{
                 docker{
-                    image 'node:24.14.0'
+                    image 'my-react-app:latest'
                     reuseNode true
                 }
             }
@@ -45,8 +52,8 @@ pipeline{
                     string(credentialsId: 'netlify-site-id', variable: 'NETLIFY_SITE_ID')
                 ]) {
                     sh '''
-                        npx netlify-cli --version
-                        npx netlify-cli deploy --prod --dir=dist --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
+                        netlify --version
+                        netlify deploy --prod --dir=dist --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
                     '''
                 }
             }
