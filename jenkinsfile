@@ -1,59 +1,73 @@
 pipeline{
     agent any
     stages{
-        stage('Docker Build'){
-            steps{
-                sh '''
-                    docker build -t my-react-app:latest .
-                '''
-            }
-        }   
-        stage('Build'){
+        // stage('Docker Build'){
+        //     steps{
+        //         sh '''
+        //             docker build -t my-react-app:latest .
+        //         '''
+        //     }
+        // }   
+        // stage('Build'){
+        //     agent{
+        //         docker{
+        //             image 'node:24.14.0'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps{
+        //         sh '''
+        //             ls -la
+        //             node --version
+        //             npm --version
+        //             npm install
+        //             npm run build
+        //             ls -la
+        //         '''
+        //     }
+        // }
+        // stage('Test'){
+        //     agent{
+        //         docker{
+        //             image 'node:24.14.0'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps{
+        //         sh '''
+        //             npm test
+        //         '''
+        //     }
+        // }
+        // stage('Deploy'){
+        //     agent{
+        //         docker{
+        //             image 'my-react-app:latest'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps{
+        //         withCredentials([
+        //             string(credentialsId: 'netlify-auth-token', variable: 'NETLIFY_AUTH_TOKEN'),
+        //             string(credentialsId: 'netlify-site-id', variable: 'NETLIFY_SITE_ID')
+        //         ]) {
+        //             sh '''
+        //                 netlify --version
+        //                 netlify deploy --prod --dir=dist --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
+        //             '''
+        //         }
+        //     }
+        // }
+        stage('AWS'){
             agent{
                 docker{
-                    image 'node:24.14.0'
+                    image 'amazon/aws-cli:latest'
                     reuseNode true
+                    args '--entrypoint=""'
                 }
-            }
-            steps{
-                sh '''
-                    ls -la
-                    node --version
-                    npm --version
-                    npm install
-                    npm run build
-                    ls -la
-                '''
-            }
-        }
-        stage('Test'){
-            agent{
-                docker{
-                    image 'node:24.14.0'
-                    reuseNode true
-                }
-            }
-            steps{
-                sh '''
-                    npm test
-                '''
-            }
-        }
-        stage('Deploy'){
-            agent{
-                docker{
-                    image 'my-react-app:latest'
-                    reuseNode true
-                }
-            }
-            steps{
-                withCredentials([
-                    string(credentialsId: 'netlify-auth-token', variable: 'NETLIFY_AUTH_TOKEN'),
-                    string(credentialsId: 'netlify-site-id', variable: 'NETLIFY_SITE_ID')
-                ]) {
+                steps{
                     sh '''
-                        netlify --version
-                        netlify deploy --prod --dir=dist --site=$NETLIFY_SITE_ID --auth=$NETLIFY_AUTH_TOKEN
+                        aws --version
                     '''
                 }
             }
