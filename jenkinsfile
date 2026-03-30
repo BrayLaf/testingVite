@@ -1,9 +1,7 @@
 pipeline{
     agent any
     stages{
-        environment{
-            AWS_DEFAULT_REGION = 'ca-central-1'
-        }
+        
         // stage('Docker Build'){
         //     steps{
         //         sh '''
@@ -83,6 +81,9 @@ pipeline{
         //     }
         // }
         stage('Deploy to ECS'){
+            environment{
+                AWS_DEFAULT_REGION = 'ca-central-1'
+            }
             agent{
                 docker{
                     image 'amazon/aws-cli:latest'
